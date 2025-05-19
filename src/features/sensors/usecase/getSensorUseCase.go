@@ -28,7 +28,8 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 	}
 
 	res := &response.ResGetSensor{
-		SensorID: sensorDTO.SensorID,
+		SensorID:    sensorDTO.SensorID,
+		LightStatus: *sensorDTO.LightStatus,
 	}
 	for _, sensor := range sensorDTO.Sensors {
 		res.Sensors = append(res.Sensors, response.Sensor{

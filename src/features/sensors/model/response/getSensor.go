@@ -1,8 +1,9 @@
 package response
 
 type ResGetSensor struct {
-	SensorID string   `json:"sensorID"`
-	Sensors  []Sensor `json:"sensors"`
+	SensorID    string   `json:"sensorID"`
+	LightStatus bool     `json:"lightStatus"`
+	Sensors     []Sensor `json:"sensors"`
 }
 
 type Sensor struct {

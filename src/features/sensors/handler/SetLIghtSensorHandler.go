@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"main/features/sensors/model/request"
+	"main/features/sensors/model/response"
 	"main/utils"
 	"net/http"
 
@@ -38,7 +39,7 @@ func NewSetLightSensorHandler(c *echo.Echo, useCase _interface.ISetLightSensorUs
 // @Description INTERNAL_DB : DB 처리 실패
 // @Param setLightSensor body request.ReqSetLightSensor true "setLightSensor"
 // @Produce json
-// @Success 200 {object} bool
+// @Success 200 {object} response.ResSetLightSensor
 // @Failure 400 {object} error
 // @Failure 500 {object} error
 // @Tags sensors
@@ -54,5 +55,8 @@ func (h *SetLightSensorHandler) SetLightSensor(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, false)
 	}
 
-	return c.JSON(http.StatusOK, true)
+	return c.JSON(http.StatusOK, response.ResSetLightSensor{
+		SensorID:    req.SensorID,
+		LightStatus: req.Status,
+	})
 }

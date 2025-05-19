@@ -16,7 +16,7 @@ var MqttClient *MQTTClient
 
 func MQTTInit() error {
 	var err error
-	MqttClient, err = NewMQTTClient("tcp://192.168.0.6:1883", "go-mqtt-client")
+	MqttClient, err = NewMQTTClient("tcp://192.168.0.6:1883", "go-mqtt-client1")
 	if err != nil {
 		fmt.Println("MQTT 클라이언트 생성 실패")
 		defer MqttClient.Disconnect()
@@ -36,10 +36,11 @@ func NewMQTTClient(broker string, clientID string) (*MQTTClient, error) {
 	opts.AddBroker(broker)
 	opts.SetClientID(clientID)
 	opts.SetProtocolVersion(5)
-	opts.SetKeepAlive(60 * time.Second)
-	opts.SetPingTimeout(1 * time.Second)
+	opts.SetKeepAlive(30 * time.Second)
+	opts.SetPingTimeout(5 * time.Second)
 	opts.SetCleanSession(true)
 	opts.SetAutoReconnect(true)
+	opts.SetMaxReconnectInterval(1 * time.Minute)
 	opts.SetConnectionLostHandler(func(client mqtt.Client, err error) {
 		log.Printf("Connection lost: %v", err)
 	})
