@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	_interface "main/features/sensors/model/interface"
@@ -27,8 +26,6 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(sensorDTO)
 
 	res := &response.ResGetSensor{
 		SensorID: sensorDTO.SensorID,

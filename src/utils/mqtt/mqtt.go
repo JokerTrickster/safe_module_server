@@ -35,6 +35,7 @@ func NewMQTTClient(broker string, clientID string) (*MQTTClient, error) {
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(broker)
 	opts.SetClientID(clientID)
+	opts.SetProtocolVersion(5)
 	opts.SetKeepAlive(60 * time.Second)
 	opts.SetPingTimeout(1 * time.Second)
 	opts.SetCleanSession(true)
@@ -57,6 +58,11 @@ func NewMQTTClient(broker string, clientID string) (*MQTTClient, error) {
 // 토픽 구독 등록
 func MQTTTopicnIit() error {
 	err := MQTTSubscribeRegister("/sensor/datas", 2, SensorDataHandler)
+	if err != nil {
+		return err
+	}
+
+	err = MQTTSubscribeRegister("/sensor/light", 2, LightDataHandler)
 	if err != nil {
 		return err
 	}

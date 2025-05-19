@@ -9,3 +9,7 @@ import (
 type IGetSensorUseCase interface {
 	GetSensor(c context.Context, req *request.ReqGetSensor) (*response.ResGetSensor, error)
 }
+
+type ISetLightSensorUseCase interface {
+	SetLightSensor(c context.Context, req *request.ReqSetLightSensor) error
+}

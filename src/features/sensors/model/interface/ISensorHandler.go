@@ -7,3 +7,7 @@ import (
 type IGetSensorHandler interface {
 	GetSensor(c echo.Context) error
 }
+
+type ISetLightSensorHandler interface {
+	SetLightSensor(c echo.Context) error
+}

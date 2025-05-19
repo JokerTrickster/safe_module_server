@@ -8,3 +8,7 @@ import (
 type IGetSensorRepository interface {
 	FindOneSensor(ctx context.Context, macAddress string) (db.SensorDTO, error)
 }
+
+type ISetLightSensorRepository interface {
+	UpdateOneLightSensor(ctx context.Context, sensorID string, status bool) error
+}
