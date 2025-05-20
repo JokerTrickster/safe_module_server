@@ -3,9 +3,18 @@ package mqtt
 import (
 	"fmt"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/eclipse/paho.golang/paho"
 )
 
-func LightDataHandler(client mqtt.Client, msg mqtt.Message) {
-	fmt.Printf("Received message on topic!! %s: %s\n", msg.Topic(), string(msg.Payload()))
+// 응답 핸들러 등록
+func SensorLightResponseHandler(p *paho.Publish) {
+	fmt.Println("SensorLightResponseHandler 호출", string(p.Payload))
+	if p.Properties == nil || p.Properties.CorrelationData == nil {
+		return
+	}
+	corrID := string(p.Properties.CorrelationData)
+	if chVal, ok := respWaiters.Load(corrID); ok {
+		ch := chVal.(chan *paho.Publish)
+		ch <- p // 응답 전송
+	}
 }

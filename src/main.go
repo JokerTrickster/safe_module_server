@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"main/features/sensors/handler"
 	"main/utils/db"
 	_log "main/utils/log"
@@ -23,17 +24,21 @@ func main() {
 	e.Use(middleware.Recover())
 
 	if err := db.InitMongoDB(); err != nil {
+		fmt.Println(err)
 		return
 	}
 	if err := _log.InitLogger(); err != nil {
+		fmt.Println(err)
 		return
 	}
 
 	if err := mqtt.MQTTInit(); err != nil {
+		fmt.Println(err)
 		return
 	}
 
 	if err := handler.NewSensorHandler(e); err != nil {
+		fmt.Println(err)
 		return
 	}
 

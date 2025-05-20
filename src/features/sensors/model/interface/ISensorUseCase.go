@@ -13,3 +13,7 @@ type IGetSensorUseCase interface {
 type ISetLightSensorUseCase interface {
 	SetLightSensor(c context.Context, req *request.ReqSetLightSensor) error
 }
+
+type ITopicRegisterSensorUseCase interface {
+	TopicRegisterSensor(c context.Context, req *request.ReqTopicRegisterSensor) error
+}

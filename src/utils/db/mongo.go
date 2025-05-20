@@ -33,14 +33,8 @@ func InitMongoDB() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// MongoDB 연결 (인증 정보 포함)
-	clientOptions := options.Client().
-		ApplyURI("mongodb://root:pass@localhost:27017/safe_modules").
-		SetAuth(options.Credential{
-			Username: "root",
-			Password: "pass",
-		})
-
+	// MongoDB 연결
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return err

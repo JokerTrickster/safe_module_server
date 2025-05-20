@@ -1,122 +1,126 @@
 package mqtt
 
 import (
+	"context"
 	"fmt"
-	"log"
+	"net"
+	"sync"
 	"time"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/eclipse/paho.golang/paho"
 )
 
-type MQTTClient struct {
-	client mqtt.Client
-}
+var (
+	client      *paho.Client
+	router      *paho.StandardRouter
+	respWaiters sync.Map // map[string]chan *paho.Publish
+)
 
-var MqttClient *MQTTClient
-
+// MQTTInit initializes MQTT client
 func MQTTInit() error {
-	var err error
-	MqttClient, err = NewMQTTClient("tcp://192.168.0.6:1883", "go-mqtt-client1")
+	// MQTT 브로커에 연결
+	conn, err := net.Dial("tcp", "192.168.0.6:1883")
 	if err != nil {
-		fmt.Println("MQTT 클라이언트 생성 실패")
-		defer MqttClient.Disconnect()
-		return err
+		return fmt.Errorf("failed to connect to broker: %v", err)
 	}
 
-	if err := MQTTTopicnIit(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// NewMQTTClient creates a new MQTT client instance
-func NewMQTTClient(broker string, clientID string) (*MQTTClient, error) {
-	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
-	opts.SetClientID(clientID)
-	opts.SetProtocolVersion(5)
-	opts.SetKeepAlive(30 * time.Second)
-	opts.SetPingTimeout(5 * time.Second)
-	opts.SetCleanSession(true)
-	opts.SetAutoReconnect(true)
-	opts.SetMaxReconnectInterval(1 * time.Minute)
-	opts.SetConnectionLostHandler(func(client mqtt.Client, err error) {
-		log.Printf("Connection lost: %v", err)
+	router = paho.NewStandardRouter()
+	client = paho.NewClient(paho.ClientConfig{
+		Conn:   conn,
+		Router: router,
 	})
-	opts.SetOnConnectHandler(func(client mqtt.Client) {
-		log.Println("Connected to MQTT broker")
+	clientID := fmt.Sprintf("go-mqtt-logan2-%d", time.Now().UnixNano())
+	// CONNECT 패킷 전송
+	_, err = client.Connect(context.Background(), &paho.Connect{
+		ClientID: clientID,
 	})
-
-	client := mqtt.NewClient(opts)
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		return nil, fmt.Errorf("failed to connect to MQTT broker: %v", token.Error())
-	}
-
-	return &MQTTClient{client: client}, nil
-}
-
-// 토픽 구독 등록
-func MQTTTopicnIit() error {
-	err := MQTTSubscribeRegister("/sensor/datas", 2, SensorDataHandler)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to connect: %v", err)
 	}
 
-	err = MQTTSubscribeRegister("/sensor/light", 2, LightDataHandler)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+	Subscribe("/sensor/datas", 2, SensorDataHandler)
 
-// 토픽 구독 등록
-func MQTTSubscribeRegister(topic string, qos byte, callback mqtt.MessageHandler) error {
-	err := MqttClient.Subscribe(topic, qos, callback)
-	if err != nil {
-		return err
-	}
-	fmt.Println("MQTT 토픽 구독 성공 ", topic, qos)
-	return nil
-}
-
-// 토픽 메시지 발행
-func MQTTMessagePublish(topic string, qos byte, retained bool, payload interface{}) error {
-	err := MqttClient.Publish(topic, qos, retained, payload)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// Publish sends a message to a topic
-func (m *MQTTClient) Publish(topic string, qos byte, retained bool, payload interface{}) error {
-	token := m.client.Publish(topic, qos, retained, payload)
-	if token.Wait() && token.Error() != nil {
-		return fmt.Errorf("failed to publish message: %v", token.Error())
-	}
 	return nil
 }
 
 // Subscribe subscribes to a topic
-func (m *MQTTClient) Subscribe(topic string, qos byte, callback mqtt.MessageHandler) error {
-	token := m.client.Subscribe(topic, qos, callback)
-	if token.Wait() && token.Error() != nil {
-		return fmt.Errorf("failed to subscribe to topic: %v", token.Error())
+func Subscribe(topic string, qos byte, handler func(*paho.Publish)) error {
+	if router == nil {
+		return fmt.Errorf("router not initialized")
 	}
+	router.RegisterHandler(topic, handler)
+
+	_, err := client.Subscribe(context.Background(), &paho.Subscribe{
+		Subscriptions: []paho.SubscribeOptions{
+			{
+				Topic: topic,
+				QoS:   qos,
+			},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to subscribe: %v", err)
+	}
+
+	fmt.Printf("구독 성공 토픽 : %s\n", topic)
 	return nil
 }
 
-// Unsubscribe unsubscribes from a topic
-func (m *MQTTClient) Unsubscribe(topic string) error {
-	token := m.client.Unsubscribe(topic)
-	if token.Wait() && token.Error() != nil {
-		return fmt.Errorf("failed to unsubscribe from topic: %v", token.Error())
+// Publish publishes a message to a topic
+func Publish(topic string, qos byte, payload interface{}, correlationData string, responseTopic string) error {
+	var message []byte
+	switch v := payload.(type) {
+	case string:
+		message = []byte(v)
+	case []byte:
+		message = v
+	default:
+		return fmt.Errorf("unsupported payload type")
 	}
+
+	_, err := client.Publish(context.Background(), &paho.Publish{
+		Topic:   topic,
+		QoS:     qos,
+		Payload: message,
+		Properties: &paho.PublishProperties{
+			CorrelationData: []byte(correlationData),
+			ResponseTopic:   responseTopic,
+			ContentType:     "application/json",
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to publish: %v", err)
+	}
+
+	fmt.Printf("Published to topic: %s\n", topic)
 	return nil
 }
 
-// Disconnect disconnects from the MQTT broker
-func (m *MQTTClient) Disconnect() {
-	m.client.Disconnect(250)
+// Close closes the MQTT connection
+func Close() {
+	if client != nil {
+		client.Disconnect(&paho.Disconnect{})
+	}
+}
+
+// Publish & wait for response (timeout 지원)
+func PublishAndWaitForResponse(topic string, qos byte, payload interface{}, correlationID string, responseTopic string, timeout time.Duration) (*paho.Publish, error) {
+	// 2. 응답 채널 준비 & 등록
+	respCh := make(chan *paho.Publish, 1)
+	respWaiters.Store(correlationID, respCh)
+	defer respWaiters.Delete(correlationID)
+
+	// 3. Publish 요청 전송
+	err := Publish(topic, qos, payload, correlationID, responseTopic)
+	if err != nil {
+		return nil, err
+	}
+
+	// 4. 응답 대기 (timeout)
+	select {
+	case resp := <-respCh:
+		return resp, nil
+	case <-time.After(timeout):
+		return nil, fmt.Errorf("timeout waiting for response")
+	}
 }

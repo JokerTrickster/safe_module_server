@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"main/utils/db"
-	_log "main/utils/log"
+	"sync"
 	"time"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
+	_log "main/utils/log"
+
+	"github.com/eclipse/paho.golang/paho"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -25,16 +27,18 @@ type SensorData struct {
 	} `json:"sensor_list"`
 }
 
+// 구독 상태를 관리할 sync.Map으로 변경
+var subscribedTopics sync.Map
+
 // 센서 데이터 핸들러
-func SensorDataHandler(client mqtt.Client, msg mqtt.Message) {
+func SensorDataHandler(p *paho.Publish) {
 	_log.Log(_log.Info, "Received message on topic!!", map[string]interface{}{
-		"topic":   msg.Topic(),
-		"payload": string(msg.Payload()),
+		"payload": string(p.Payload),
 	})
 
 	// JSON 파싱
 	var sensorData SensorData
-	if err := json.Unmarshal(msg.Payload(), &sensorData); err != nil {
+	if err := json.Unmarshal(p.Payload, &sensorData); err != nil {
 		_log.Log(_log.Error, "Failed to parse sensor data", map[string]interface{}{
 			"error": err.Error(),
 		})

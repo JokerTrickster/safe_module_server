@@ -12,3 +12,6 @@ type IGetSensorRepository interface {
 type ISetLightSensorRepository interface {
 	UpdateOneLightSensor(ctx context.Context, sensorID string, status bool) error
 }
+
+type ITopicRegisterSensorRepository interface {
+}
