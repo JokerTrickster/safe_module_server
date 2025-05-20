@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	_interface "main/features/sensors/model/interface"
 	"main/utils/db"
@@ -20,6 +21,7 @@ func (r *GetSensorRepository) FindOneSensor(ctx context.Context, sensorID string
 	var sensor db.SensorDTO
 	err := db.SensorsCollection.FindOne(ctx, filter).Decode(&sensor)
 	if err != nil {
+		fmt.Println("err", err)
 		return db.SensorDTO{}, err
 	}
 

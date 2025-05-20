@@ -21,7 +21,6 @@ func NewGetSensorUseCase(repository _interface.IGetSensorRepository, timeout tim
 func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSensor) (*response.ResGetSensor, error) {
 	ctx, cancel := context.WithTimeout(c, d.ContextTimeout)
 	defer cancel()
-
 	sensorDTO, err := d.Repository.FindOneSensor(ctx, req.SensorID)
 	if err != nil {
 		return nil, err
@@ -29,7 +28,7 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 
 	res := &response.ResGetSensor{
 		SensorID:    sensorDTO.SensorID,
-		LightStatus: *sensorDTO.LightStatus,
+		LightStatus: sensorDTO.LightStatus,
 	}
 	for _, sensor := range sensorDTO.Sensors {
 		res.Sensors = append(res.Sensors, response.Sensor{

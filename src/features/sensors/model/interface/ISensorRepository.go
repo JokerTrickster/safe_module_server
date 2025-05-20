@@ -10,7 +10,7 @@ type IGetSensorRepository interface {
 }
 
 type ISetLightSensorRepository interface {
-	UpdateOneLightSensor(ctx context.Context, sensorID string, status bool) error
+	UpdateOneLightSensor(ctx context.Context, sensorID string, status string) error
 }
 
 type ITopicRegisterSensorRepository interface {

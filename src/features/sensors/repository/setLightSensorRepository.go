@@ -14,7 +14,7 @@ func NewSetLightSensorRepository(mongoDB *mongo.Client) _interface.ISetLightSens
 	return &SetLightSensorRepository{mongoDB: mongoDB}
 }
 
-func (r *SetLightSensorRepository) UpdateOneLightSensor(ctx context.Context, sensorID string, status bool) error {
+func (r *SetLightSensorRepository) UpdateOneLightSensor(ctx context.Context, sensorID string, status string) error {
 	//status pointer로 변경
 	fmt.Println("UpdateOneLightSensor", sensorID, status)
 	filter := bson.M{"sensorID": sensorID}

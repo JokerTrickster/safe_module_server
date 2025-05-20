@@ -33,15 +33,9 @@ func (d *SetLightSensorUseCase) SetLightSensor(c context.Context, req *request.R
 
 	// json 형식을 만들거다. true 일 경우 status on, false 일 경우 status off
 	var jsonData []byte
-	if req.Status {
-		jsonData, _ = json.Marshal(map[string]interface{}{
-			"status": "on",
-		})
-	} else {
-		jsonData, _ = json.Marshal(map[string]interface{}{
-			"status": "off",
-		})
-	}
+	jsonData, _ = json.Marshal(map[string]interface{}{
+		"status": req.Status,
+	})
 
 	resp, err := mqtt.PublishAndWaitForResponse(requestTopic, 2, jsonData, uuid, responseTopic, 5*time.Second)
 	if err != nil {
