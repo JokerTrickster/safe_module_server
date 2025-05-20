@@ -17,3 +17,7 @@ type TopicRegisterSensorRepository struct {
 type GetLightSensorRepository struct {
 	mongoDB *mongo.Client
 }
+
+type ListSensorRepository struct {
+	mongoDB *mongo.Client
+}

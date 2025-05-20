@@ -19,3 +19,7 @@ type ITopicRegisterSensorRepository interface {
 type IGetLightSensorRepository interface {
 	UpdateOneLightSensor(ctx context.Context, sensorID string, status string) error
 }
+
+type IListSensorRepository interface {
+	FindAllSensor(ctx context.Context) ([]db.SensorDTO, error)
+}

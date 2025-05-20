@@ -19,3 +19,7 @@ type ITopicRegisterSensorHandler interface {
 type IGetLightSensorHandler interface {
 	GetLightSensor(c echo.Context) error
 }
+
+type IListSensorHandler interface {
+	ListSensor(c echo.Context) error
+}
