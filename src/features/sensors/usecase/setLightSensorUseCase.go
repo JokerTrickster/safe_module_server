@@ -41,6 +41,7 @@ func (d *SetLightSensorUseCase) SetLightSensor(c context.Context, req *request.R
 	if err != nil {
 		return err
 	}
+
 	fmt.Println("응답 메시지 , ", string(resp.Payload))
 
 	// db 상태 변경
