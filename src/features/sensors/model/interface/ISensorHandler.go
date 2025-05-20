@@ -15,3 +15,7 @@ type ISetLightSensorHandler interface {
 type ITopicRegisterSensorHandler interface {
 	TopicRegisterSensor(c echo.Context) error
 }
+
+type IGetLightSensorHandler interface {
+	GetLightSensor(c echo.Context) error
+}

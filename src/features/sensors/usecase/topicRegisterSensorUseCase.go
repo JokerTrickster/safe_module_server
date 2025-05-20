@@ -21,10 +21,16 @@ func NewTopicRegisterSensorUseCase(repository _interface.ITopicRegisterSensorRep
 func (d *TopicRegisterSensorUseCase) TopicRegisterSensor(c context.Context, req *request.ReqTopicRegisterSensor) error {
 	_, cancel := context.WithTimeout(c, d.ContextTimeout)
 	defer cancel()
-
-	err := mqtt.Subscribe(req.Topic, byte(req.Qos), mqtt.SensorLightResponseHandler)
-	if err != nil {
-		return err
+	if req.Type == "lightSet" {
+		err := mqtt.Subscribe(req.Topic, byte(req.Qos), mqtt.SensorLightResponseHandler)
+		if err != nil {
+			return err
+		}
+	} else if req.Type == "lightGet" {
+		err := mqtt.Subscribe(req.Topic, byte(req.Qos), mqtt.GetLightResponseHandler)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
