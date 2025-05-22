@@ -108,7 +108,93 @@ func SensorDataHandler(p *paho.Publish) {
 		return
 	}
 
+	// TODO 위험 감지 했을 때 이벤트 컬렉션에 문서 생성
+	if sensorDTO.LightStatus == "shutdown" {
+		DangerLightEventUseCase(ctx, sensorDTO)
+	}
+	if sensorDTO.FireDetector == "detection" {
+		DangerFireEventUseCase(ctx, sensorDTO)
+	}
+
 	_log.Log(_log.Info, "Successfully saved sensor data", map[string]interface{}{
 		"sensorID": sensorDTO.SensorID,
 	})
+}
+
+func DangerLightEventUseCase(ctx context.Context, sensorDTO db.SensorDTO) {
+	now := time.Now()
+	SensorEventDTO := db.SensorEventDTO{
+		Type:      "light",
+		Status:    sensorDTO.LightStatus,
+		SensorID:  sensorDTO.SensorID,
+		Confirmed: false,
+		CreatedAt: &now,
+		UpdatedAt: &now,
+	}
+
+	// 기존 문서 확인
+	filter := bson.M{
+		"type":      SensorEventDTO.Type,
+		"status":    SensorEventDTO.Status,
+		"sensorID":  SensorEventDTO.SensorID,
+		"confirmed": SensorEventDTO.Confirmed,
+	}
+
+	// 문서 존재 여부 확인
+	var existingDoc db.SensorEventDTO
+	err := db.SensorEventsCollection.FindOne(ctx, filter).Decode(&existingDoc)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// 문서가 없으면 새로 생성
+			_, err = db.SensorEventsCollection.InsertOne(ctx, SensorEventDTO)
+			if err != nil {
+				_log.Log(_log.Error, "Failed to create sensor event", map[string]interface{}{
+					"error": err.Error(),
+				})
+			}
+		} else {
+			_log.Log(_log.Error, "Failed to check existing sensor event", map[string]interface{}{
+				"error": err.Error(),
+			})
+		}
+	}
+}
+
+func DangerFireEventUseCase(ctx context.Context, sensorDTO db.SensorDTO) {
+	now := time.Now()
+	SensorEventDTO := db.SensorEventDTO{
+		Type:      "fire",
+		Status:    sensorDTO.FireDetector,
+		SensorID:  sensorDTO.SensorID,
+		Confirmed: false,
+		CreatedAt: &now,
+		UpdatedAt: &now,
+	}
+
+	// 기존 문서 확인
+	filter := bson.M{
+		"type":      SensorEventDTO.Type,
+		"status":    SensorEventDTO.Status,
+		"sensorID":  SensorEventDTO.SensorID,
+		"confirmed": SensorEventDTO.Confirmed,
+	}
+
+	// 문서 존재 여부 확인
+	var existingDoc db.SensorEventDTO
+	err := db.SensorEventsCollection.FindOne(ctx, filter).Decode(&existingDoc)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// 문서가 없으면 새로 생성
+			_, err = db.SensorEventsCollection.InsertOne(ctx, SensorEventDTO)
+			if err != nil {
+				_log.Log(_log.Error, "Failed to create sensor event", map[string]interface{}{
+					"error": err.Error(),
+				})
+			}
+		} else {
+			_log.Log(_log.Error, "Failed to check existing sensor event", map[string]interface{}{
+				"error": err.Error(),
+			})
+		}
+	}
 }

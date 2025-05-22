@@ -19,6 +19,7 @@ var (
 	LightsCollection          *mongo.Collection
 	SensorsCollection         *mongo.Collection
 	SensorThresholdCollection *mongo.Collection
+	SensorEventsCollection    *mongo.Collection
 )
 
 const (
@@ -27,6 +28,7 @@ const (
 	LightsCollectionName          = "lights"
 	SensorsCollectionName         = "sensors"
 	SensorThresholdCollectionName = "sensor_threshold"
+	SensorEventsCollectionName    = "sensor_events"
 )
 
 // InitMongoDB initializes MongoDB connection
@@ -57,6 +59,7 @@ func InitMongoDB() error {
 	LightsCollection = Database.Collection(LightsCollectionName)
 	SensorsCollection = Database.Collection(SensorsCollectionName)
 	SensorThresholdCollection = Database.Collection(SensorThresholdCollectionName)
+	SensorEventsCollection = Database.Collection(SensorEventsCollectionName)
 	fmt.Println("몽고디비 연결 성공!")
 	return nil
 }

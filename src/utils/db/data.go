@@ -33,3 +33,13 @@ type SensorThresholdDTO struct {
 	DeletedAt *time.Time `json:"deletedAt" bson:"deletedAt"`
 	UpdatedAt *time.Time `json:"updatedAt" bson:"updatedAt"`
 }
+
+type SensorEventDTO struct {
+	Type      string     `json:"type" bson:"type"`
+	Status    string     `json:"status" bson:"status"`
+	SensorID  string     `json:"sensorID" bson:"sensorID"`
+	Confirmed bool       `json:"confirmed" bson:"confirmed"`
+	CreatedAt *time.Time `json:"createdAt" bson:"createdAt"`
+	DeletedAt *time.Time `json:"deletedAt" bson:"deletedAt"`
+	UpdatedAt *time.Time `json:"updatedAt" bson:"updatedAt"`
+}

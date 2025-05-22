@@ -36,3 +36,7 @@ type IListThresholdSensorRepository interface {
 type ISetPositionSensorRepository interface {
 	UpdateOnePositionSensor(ctx context.Context, sensorID string, position request.Position) error
 }
+
+type IConfirmEventSensorRepository interface {
+	UpdateOneConfirmEventSensor(ctx context.Context, sensorID, eventType, status string) error
+}
