@@ -19,7 +19,7 @@ type Sensor struct {
 	Unit   string  `json:"unit" bson:"unit"`
 }
 
-type SensorThreshold struct {
+type SensorThresholdDTO struct {
 	Name      string     `json:"name" bson:"name"`
 	Unit      string     `json:"unit" bson:"unit"`
 	Threshold float64    `json:"threshold" bson:"threshold"`
