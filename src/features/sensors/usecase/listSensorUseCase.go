@@ -7,6 +7,7 @@ import (
 
 	_interface "main/features/sensors/model/interface"
 	"main/features/sensors/model/response"
+	"main/utils/db"
 )
 
 type ListSensorUseCase struct {
@@ -31,12 +32,19 @@ func (d *ListSensorUseCase) ListSensor(c context.Context) (*response.ResListSens
 		SensorList: make([]response.ListSensor, 0),
 	}
 
-	for i, sensorDTO := range sensorDTOList {
-		res.SensorList = append(res.SensorList, response.ListSensor{
+	for _, sensorDTO := range sensorDTOList {
+		tmpListSensor := response.ListSensor{
 			SensorID:     sensorDTO.SensorID,
 			LightStatus:  sensorDTO.LightStatus,
 			FireDetector: sensorDTO.FireDetector,
-		})
+		}
+		if sensorDTO.Position != (db.Position{}) {
+			tmpPosition := response.Position{
+				X: sensorDTO.Position.X,
+				Y: sensorDTO.Position.Y,
+			}
+			tmpListSensor.Position = tmpPosition
+		}
 		resSensor := make([]response.Sensor, 0)
 		for _, sensor := range sensorDTO.Sensors {
 			tmpSensor := response.Sensor{
@@ -47,7 +55,8 @@ func (d *ListSensorUseCase) ListSensor(c context.Context) (*response.ResListSens
 			}
 			resSensor = append(resSensor, tmpSensor)
 		}
-		res.SensorList[i].Sensors = resSensor
+		tmpListSensor.Sensors = resSensor
+		res.SensorList = append(res.SensorList, tmpListSensor)
 	}
 
 	return res, nil

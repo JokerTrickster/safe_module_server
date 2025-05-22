@@ -31,3 +31,7 @@ type ISetThresholdSensorHandler interface {
 type IListThresholdSensorHandler interface {
 	ListThresholdSensor(c echo.Context) error
 }
+
+type ISetPositionSensorHandler interface {
+	SetPositionSensor(c echo.Context) error
+}

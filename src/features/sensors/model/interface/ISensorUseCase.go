@@ -33,3 +33,7 @@ type ISetThresholdSensorUseCase interface {
 type IListThresholdSensorUseCase interface {
 	ListThresholdSensor(c context.Context) (*response.ResListThresholdSensor, error)
 }
+
+type ISetPositionSensorUseCase interface {
+	SetPositionSensor(c context.Context, req *request.ReqSetPositionSensor) error
+}

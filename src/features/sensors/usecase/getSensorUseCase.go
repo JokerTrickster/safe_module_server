@@ -7,6 +7,7 @@ import (
 	_interface "main/features/sensors/model/interface"
 	"main/features/sensors/model/request"
 	"main/features/sensors/model/response"
+	"main/utils/db"
 )
 
 type GetSensorUseCase struct {
@@ -30,6 +31,12 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 		SensorID:     sensorDTO.SensorID,
 		LightStatus:  sensorDTO.LightStatus,
 		FireDetector: sensorDTO.FireDetector,
+	}
+	if sensorDTO.Position != (db.Position{}) {
+		res.Position = response.Position{
+			X: sensorDTO.Position.X,
+			Y: sensorDTO.Position.Y,
+		}
 	}
 	for _, sensor := range sensorDTO.Sensors {
 		res.Sensors = append(res.Sensors, response.Sensor{

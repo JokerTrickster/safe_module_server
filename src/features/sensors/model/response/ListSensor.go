@@ -8,5 +8,6 @@ type ListSensor struct {
 	SensorID     string   `json:"sensorID"`
 	LightStatus  string   `json:"lightStatus"`
 	FireDetector string   `json:"fireDetector"`
+	Position     Position `json:"position"`
 	Sensors      []Sensor `json:"sensors"`
 }

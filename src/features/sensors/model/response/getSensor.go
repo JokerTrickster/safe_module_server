@@ -4,7 +4,13 @@ type ResGetSensor struct {
 	SensorID     string   `json:"sensorID"`
 	LightStatus  string   `json:"lightStatus"`
 	FireDetector string   `json:"fireDetector"`
+	Position     Position `json:"position"`
 	Sensors      []Sensor `json:"sensors"`
+}
+
+type Position struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
 }
 
 type Sensor struct {

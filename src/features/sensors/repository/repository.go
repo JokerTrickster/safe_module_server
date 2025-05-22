@@ -29,3 +29,7 @@ type SetThresholdSensorRepository struct {
 type ListThresholdSensorRepository struct {
 	mongoDB *mongo.Client
 }
+
+type SetPositionSensorRepository struct {
+	mongoDB *mongo.Client
+}

@@ -2,6 +2,7 @@ package _interface
 
 import (
 	"context"
+	"main/features/sensors/model/request"
 	"main/utils/db"
 )
 
@@ -30,4 +31,8 @@ type ISetThresholdSensorRepository interface {
 
 type IListThresholdSensorRepository interface {
 	FindAllThresholdSensor(ctx context.Context) ([]db.SensorThresholdDTO, error)
+}
+
+type ISetPositionSensorRepository interface {
+	UpdateOnePositionSensor(ctx context.Context, sensorID string, position request.Position) error
 }
