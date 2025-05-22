@@ -9,6 +9,8 @@ import (
 
 	swaggerDocs "main/docs"
 
+	mw "main/utils/middleware"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -31,7 +33,10 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-
+	if err := mw.InitMiddleware(e); err != nil {
+		fmt.Println(err)
+		return
+	}
 	if err := mqtt.MQTTInit(); err != nil {
 		fmt.Println(err)
 		return
