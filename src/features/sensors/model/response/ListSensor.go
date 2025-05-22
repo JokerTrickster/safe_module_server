@@ -5,7 +5,8 @@ type ResListSensor struct {
 }
 
 type ListSensor struct {
-	SensorID    string   `json:"sensorID"`
-	LightStatus string   `json:"lightStatus"`
-	Sensors     []Sensor `json:"sensors"`
+	SensorID     string   `json:"sensorID"`
+	LightStatus  string   `json:"lightStatus"`
+	FireDetector string   `json:"fireDetector"`
+	Sensors      []Sensor `json:"sensors"`
 }

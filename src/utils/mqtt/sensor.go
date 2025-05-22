@@ -16,9 +16,11 @@ import (
 )
 
 type SensorData struct {
-	SensorID    string `json:"sensor_id"`
-	BootingTime int64  `json:"booting_time"`
-	SensorList  []struct {
+	SensorID     string `json:"sensor_id"`
+	BootingTime  int64  `json:"booting_time"`
+	FireDetector string `json:"fire_detector"`
+	LightStatus  string `json:"light_status"`
+	SensorList   []struct {
 		Name    string  `json:"name"`
 		Status  string  `json:"status"`
 		Value   float64 `json:"value"`
@@ -50,10 +52,12 @@ func SensorDataHandler(p *paho.Publish) {
 
 	// SensorDTO로 변환
 	sensorDTO := db.SensorDTO{
-		SensorID:  sensorData.SensorID,
-		Sensors:   make([]db.Sensor, len(sensorData.SensorList)),
-		CreatedAt: &createdAt,
-		UpdatedAt: &updatedAt,
+		SensorID:     sensorData.SensorID,
+		LightStatus:  sensorData.LightStatus,
+		FireDetector: sensorData.FireDetector,
+		Sensors:      make([]db.Sensor, len(sensorData.SensorList)),
+		CreatedAt:    &createdAt,
+		UpdatedAt:    &updatedAt,
 	}
 
 	// 센서 데이터 변환
@@ -62,6 +66,7 @@ func SensorDataHandler(p *paho.Publish) {
 			Name:   sensor.Name,
 			Value:  sensor.Value,
 			Status: sensor.Status,
+			Unit:   sensor.Unit,
 		}
 	}
 

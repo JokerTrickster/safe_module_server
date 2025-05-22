@@ -27,14 +27,16 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 	}
 
 	res := &response.ResGetSensor{
-		SensorID:    sensorDTO.SensorID,
-		LightStatus: sensorDTO.LightStatus,
+		SensorID:     sensorDTO.SensorID,
+		LightStatus:  sensorDTO.LightStatus,
+		FireDetector: sensorDTO.FireDetector,
 	}
 	for _, sensor := range sensorDTO.Sensors {
 		res.Sensors = append(res.Sensors, response.Sensor{
 			Name:   sensor.Name,
 			Value:  sensor.Value,
 			Status: sensor.Status,
+			Unit:   sensor.Unit,
 		})
 	}
 

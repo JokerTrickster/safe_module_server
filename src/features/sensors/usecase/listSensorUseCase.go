@@ -33,8 +33,9 @@ func (d *ListSensorUseCase) ListSensor(c context.Context) (*response.ResListSens
 
 	for i, sensorDTO := range sensorDTOList {
 		res.SensorList = append(res.SensorList, response.ListSensor{
-			SensorID:    sensorDTO.SensorID,
-			LightStatus: sensorDTO.LightStatus,
+			SensorID:     sensorDTO.SensorID,
+			LightStatus:  sensorDTO.LightStatus,
+			FireDetector: sensorDTO.FireDetector,
 		})
 		resSensor := make([]response.Sensor, 0)
 		for _, sensor := range sensorDTO.Sensors {
@@ -42,6 +43,7 @@ func (d *ListSensorUseCase) ListSensor(c context.Context) (*response.ResListSens
 				Name:   sensor.Name,
 				Value:  sensor.Value,
 				Status: sensor.Status,
+				Unit:   sensor.Unit,
 			}
 			resSensor = append(resSensor, tmpSensor)
 		}
