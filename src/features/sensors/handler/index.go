@@ -16,5 +16,6 @@ func NewSensorHandler(c *echo.Echo) error {
 	NewTopicRegisterSensorHandler(c, usecase.NewTopicRegisterSensorUseCase(repository.NewTopicRegisterSensorRepository(db.Client), 10*time.Second))
 	NewGetLightSensorHandler(c, usecase.NewGetLightSensorUseCase(repository.NewGetLightSensorRepository(db.Client), 10*time.Second))
 	NewListSensorHandler(c, usecase.NewListSensorUseCase(repository.NewListSensorRepository(db.Client), 10*time.Second))
+	NewSetThresholdSensorHandler(c, usecase.NewSetThresholdSensorUseCase(repository.NewSetThresholdSensorRepository(db.Client), 10*time.Second))
 	return nil
 }

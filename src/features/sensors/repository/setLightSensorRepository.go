@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	_interface "main/features/sensors/model/interface"
 	"main/utils/db"
 
@@ -16,7 +15,6 @@ func NewSetLightSensorRepository(mongoDB *mongo.Client) _interface.ISetLightSens
 
 func (r *SetLightSensorRepository) UpdateOneLightSensor(ctx context.Context, sensorID string, status string) error {
 	//status pointer로 변경
-	fmt.Println("UpdateOneLightSensor", sensorID, status)
 	filter := bson.M{"sensorID": sensorID}
 	statusPtr := &status
 	update := bson.M{"$set": bson.M{"lightStatus": statusPtr}}

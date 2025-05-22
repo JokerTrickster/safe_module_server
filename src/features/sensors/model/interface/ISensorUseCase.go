@@ -25,3 +25,7 @@ type IGetLightSensorUseCase interface {
 type IListSensorUseCase interface {
 	ListSensor(c context.Context) (*response.ResListSensor, error)
 }
+
+type ISetThresholdSensorUseCase interface {
+	SetThresholdSensor(c context.Context, req *request.ReqSetThresholdSensor) error
+}

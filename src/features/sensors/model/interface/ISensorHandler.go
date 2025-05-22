@@ -23,3 +23,7 @@ type IGetLightSensorHandler interface {
 type IListSensorHandler interface {
 	ListSensor(c echo.Context) error
 }
+
+type ISetThresholdSensorHandler interface {
+	SetThresholdSensor(c echo.Context) error
+}

@@ -21,3 +21,7 @@ type GetLightSensorRepository struct {
 type ListSensorRepository struct {
 	mongoDB *mongo.Client
 }
+
+type SetThresholdSensorRepository struct {
+	mongoDB *mongo.Client
+}

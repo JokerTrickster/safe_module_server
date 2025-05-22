@@ -23,3 +23,7 @@ type IGetLightSensorRepository interface {
 type IListSensorRepository interface {
 	FindAllSensor(ctx context.Context) ([]db.SensorDTO, error)
 }
+
+type ISetThresholdSensorRepository interface {
+	UpdateOneThresholdSensor(ctx context.Context, thresholdDTO *db.SensorThresholdDTO) error
+}
