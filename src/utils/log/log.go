@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"main/utils/db"
+	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -15,6 +17,8 @@ const (
 
 var (
 	logChan chan map[string]interface{}
+	dbLog   bool
+	logFile *os.File
 )
 
 const (
@@ -25,11 +29,27 @@ const (
 )
 
 // InitLogger initializes the logger with buffer channel
-func InitLogger() error {
+func InitLogger(useDB bool) error {
+	dbLog = useDB
 	logChan = make(chan map[string]interface{}, LogBufferSize)
-	go processLogs()
 
-	fmt.Println("로그 초기화 완료 !")
+	if !dbLog {
+		// 로그 파일 생성
+		logDir := "logs"
+		if err := os.MkdirAll(logDir, 0755); err != nil {
+			return fmt.Errorf("failed to create log directory: %v", err)
+		}
+
+		logPath := filepath.Join(logDir, fmt.Sprintf("app_%s.log", time.Now().Format("2006-01-02")))
+		var err error
+		logFile, err = os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			return fmt.Errorf("failed to open log file: %v", err)
+		}
+	}
+
+	go processLogs()
+	fmt.Println("로그 초기화 완료!")
 	return nil
 }
 
@@ -58,7 +78,7 @@ func Log(level string, message string, data map[string]interface{}) {
 	}
 }
 
-// processLogs processes logs from the buffer channel and saves to MongoDB
+// processLogs processes logs from the buffer channel and saves to MongoDB or file
 func processLogs() {
 	batch := make([]interface{}, 0, 100) // 배치 크기 100
 	ticker := time.NewTicker(5 * time.Second)
@@ -67,21 +87,40 @@ func processLogs() {
 	for {
 		select {
 		case logEntry := <-logChan:
-			batch = append(batch, logEntry)
-
-			// 배치가 가득 찼거나 채널이 비어있을 때 MongoDB에 저장
-			if len(batch) >= 100 {
-				saveLogsToMongoDB(batch)
-				batch = batch[:0]
+			if dbLog {
+				batch = append(batch, logEntry)
+				if len(batch) >= 100 {
+					saveLogsToMongoDB(batch)
+					batch = batch[:0]
+				}
+			} else {
+				saveLogToFile(logEntry)
 			}
 
 		case <-ticker.C:
-			// 주기적으로 남은 로그 저장
-			if len(batch) > 0 {
+			if dbLog && len(batch) > 0 {
 				saveLogsToMongoDB(batch)
 				batch = batch[:0]
 			}
 		}
+	}
+}
+
+// saveLogToFile saves a single log entry to file
+func saveLogToFile(logEntry map[string]interface{}) {
+	if logFile == nil {
+		return
+	}
+
+	logEntry["timestamp"] = time.Now().Format(time.RFC3339)
+	jsonData, err := json.Marshal(logEntry)
+	if err != nil {
+		log.Printf("Error marshaling log entry: %v", err)
+		return
+	}
+
+	if _, err := logFile.Write(append(jsonData, '\n')); err != nil {
+		log.Printf("Error writing to log file: %v", err)
 	}
 }
 
@@ -115,4 +154,8 @@ func CloseLogger() {
 		time.Sleep(2 * time.Second) // 남은 로그 처리 대기
 	}
 	close(logChan)
+
+	if logFile != nil {
+		logFile.Close()
+	}
 }

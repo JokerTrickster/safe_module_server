@@ -29,7 +29,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	if err := _log.InitLogger(); err != nil {
+	if err := _log.InitLogger(false); err != nil {
 		fmt.Println(err)
 		return
 	}
