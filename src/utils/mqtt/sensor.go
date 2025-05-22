@@ -91,7 +91,6 @@ func SensorDataHandler(p *paho.Publish) {
 	} else {
 		// 기존 문서가 있으면 createdAt 유지
 		sensorDTO.CreatedAt = existingDoc.CreatedAt
-		sensorDTO.LightStatus = existingDoc.LightStatus
 	}
 
 	// updatedAt은 항상 현재 시간으로 설정

@@ -29,3 +29,7 @@ type IListSensorUseCase interface {
 type ISetThresholdSensorUseCase interface {
 	SetThresholdSensor(c context.Context, req *request.ReqSetThresholdSensor) error
 }
+
+type IListThresholdSensorUseCase interface {
+	ListThresholdSensor(c context.Context) (*response.ResListThresholdSensor, error)
+}
