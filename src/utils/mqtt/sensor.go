@@ -52,13 +52,24 @@ func SensorDataHandler(p *paho.Publish) {
 
 	// SensorDTO로 변환
 	sensorDTO := db.SensorDTO{
-		SensorID:     sensorData.SensorID,
-		LightStatus:  sensorData.LightStatus,
-		FireDetector: sensorData.FireDetector,
-		Sensors:      make([]db.Sensor, len(sensorData.SensorList)),
-		CreatedAt:    &createdAt,
-		UpdatedAt:    &updatedAt,
+		SensorID:  sensorData.SensorID,
+		Sensors:   make([]db.Sensor, len(sensorData.SensorList)),
+		CreatedAt: &createdAt,
+		UpdatedAt: &updatedAt,
 	}
+
+	ctx := context.Background()
+
+	if sensorData.LightStatus == "shutdown" {
+		DangerLightEventUseCase(ctx, sensorDTO)
+	}
+	if sensorData.FireDetector == "detection" {
+		DangerFireEventUseCase(ctx, sensorDTO)
+	}
+
+	_log.Log(_log.Info, "Successfully saved sensor data", map[string]interface{}{
+		"sensorID": sensorDTO.SensorID,
+	})
 
 	// 센서 데이터 변환
 	for i, sensor := range sensorData.SensorList {
@@ -71,7 +82,6 @@ func SensorDataHandler(p *paho.Publish) {
 	}
 
 	// MongoDB에 저장 (upsert)
-	ctx := context.Background()
 	filter := bson.M{"sensorID": sensorDTO.SensorID}
 
 	// 기존 문서 확인
@@ -108,24 +118,13 @@ func SensorDataHandler(p *paho.Publish) {
 		return
 	}
 
-	// TODO 위험 감지 했을 때 이벤트 컬렉션에 문서 생성
-	if sensorDTO.LightStatus == "shutdown" {
-		DangerLightEventUseCase(ctx, sensorDTO)
-	}
-	if sensorDTO.FireDetector == "detection" {
-		DangerFireEventUseCase(ctx, sensorDTO)
-	}
-
-	_log.Log(_log.Info, "Successfully saved sensor data", map[string]interface{}{
-		"sensorID": sensorDTO.SensorID,
-	})
 }
 
 func DangerLightEventUseCase(ctx context.Context, sensorDTO db.SensorDTO) {
 	now := time.Now()
 	SensorEventDTO := db.SensorEventDTO{
 		Type:      "light",
-		Status:    sensorDTO.LightStatus,
+		Status:    "shutdown",
 		SensorID:  sensorDTO.SensorID,
 		Confirmed: false,
 		CreatedAt: &now,
@@ -164,7 +163,7 @@ func DangerFireEventUseCase(ctx context.Context, sensorDTO db.SensorDTO) {
 	now := time.Now()
 	SensorEventDTO := db.SensorEventDTO{
 		Type:      "fire",
-		Status:    sensorDTO.FireDetector,
+		Status:    "detection",
 		SensorID:  sensorDTO.SensorID,
 		Confirmed: false,
 		CreatedAt: &now,

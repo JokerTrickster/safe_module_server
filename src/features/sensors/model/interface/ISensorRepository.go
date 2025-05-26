@@ -8,6 +8,7 @@ import (
 
 type IGetSensorRepository interface {
 	FindOneSensor(ctx context.Context, macAddress string) (db.SensorDTO, error)
+	FindAllSensorEvent(ctx context.Context, sensorID string) ([]db.SensorEventDTO, error)
 }
 
 type ISetLightSensorRepository interface {
@@ -23,6 +24,7 @@ type IGetLightSensorRepository interface {
 
 type IListSensorRepository interface {
 	FindAllSensor(ctx context.Context) ([]db.SensorDTO, error)
+	FindAllSensorEvent(ctx context.Context, sensorID string) ([]db.SensorEventDTO, error)
 }
 
 type ISetThresholdSensorRepository interface {

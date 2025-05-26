@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	_interface "main/features/sensors/model/interface"
@@ -27,17 +26,27 @@ func (d *ListSensorUseCase) ListSensor(c context.Context) (*response.ResListSens
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(sensorDTOList)
 	res := &response.ResListSensor{
 		SensorList: make([]response.ListSensor, 0),
 	}
 
 	for _, sensorDTO := range sensorDTOList {
 		tmpListSensor := response.ListSensor{
-			SensorID:     sensorDTO.SensorID,
-			LightStatus:  sensorDTO.LightStatus,
-			FireDetector: sensorDTO.FireDetector,
+			SensorID: sensorDTO.SensorID,
 		}
+		sensorEventDTOList, err := d.Repository.FindAllSensorEvent(ctx, sensorDTO.SensorID)
+		if err != nil {
+			return nil, err
+		}
+		for _, sensorEventDTO := range sensorEventDTOList {
+			if sensorEventDTO.Type == "light" {
+				tmpListSensor.LightStatus = "shutdown"
+			}
+			if sensorEventDTO.Type == "fire" {
+				tmpListSensor.FireDetector = "detection"
+			}
+		}
+
 		if sensorDTO.Position != (db.Position{}) {
 			tmpPosition := response.Position{
 				X: sensorDTO.Position.X,

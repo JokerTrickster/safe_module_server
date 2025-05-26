@@ -27,3 +27,17 @@ func (r *ListSensorRepository) FindAllSensor(ctx context.Context) ([]db.SensorDT
 
 	return sensorList, nil
 }
+
+func (r *ListSensorRepository) FindAllSensorEvent(ctx context.Context, sensorID string) ([]db.SensorEventDTO, error) {
+	cursor, err := db.SensorEventsCollection.Find(ctx, bson.M{"sensorID": sensorID, "confirmed": false})
+	if err != nil {
+		return nil, err
+	}
+
+	var sensorEventList []db.SensorEventDTO
+	if err := cursor.All(ctx, &sensorEventList); err != nil {
+		return nil, err
+	}
+
+	return sensorEventList, nil
+}
