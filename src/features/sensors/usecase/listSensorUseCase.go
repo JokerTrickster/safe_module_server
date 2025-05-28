@@ -32,7 +32,8 @@ func (d *ListSensorUseCase) ListSensor(c context.Context) (*response.ResListSens
 
 	for _, sensorDTO := range sensorDTOList {
 		tmpListSensor := response.ListSensor{
-			SensorID: sensorDTO.SensorID,
+			SensorID:        sensorDTO.SensorID,
+			MotionDetection: sensorDTO.MotionDetection,
 		}
 		sensorEventDTOList, err := d.Repository.FindAllSensorEvent(ctx, sensorDTO.SensorID)
 		if err != nil {

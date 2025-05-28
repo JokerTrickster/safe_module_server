@@ -27,7 +27,8 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 		return nil, err
 	}
 	res := &response.ResGetSensor{
-		SensorID: sensorDTO.SensorID,
+		SensorID:        sensorDTO.SensorID,
+		MotionDetection: sensorDTO.MotionDetection,
 	}
 	sensorEventDTOList, err := d.Repository.FindAllSensorEvent(ctx, sensorDTO.SensorID)
 	if err != nil {

@@ -3,12 +3,13 @@ package db
 import "time"
 
 type SensorDTO struct {
-	SensorID  string     `json:"sensorID" bson:"sensorID"`
-	Position  Position   `json:"position" bson:"position"`
-	Sensors   []Sensor   `json:"sensors" bson:"sensors"`
-	CreatedAt *time.Time `json:"createdAt" bson:"createdAt"`
-	DeletedAt *time.Time `json:"deletedAt" bson:"deletedAt"`
-	UpdatedAt *time.Time `json:"updatedAt" bson:"updatedAt"`
+	SensorID        string     `json:"sensorID" bson:"sensorID"`
+	Position        Position   `json:"position" bson:"position"`
+	Sensors         []Sensor   `json:"sensors" bson:"sensors"`
+	MotionDetection string     `json:"motionDetection" bson:"motionDetection"`
+	CreatedAt       *time.Time `json:"createdAt" bson:"createdAt"`
+	DeletedAt       *time.Time `json:"deletedAt" bson:"deletedAt"`
+	UpdatedAt       *time.Time `json:"updatedAt" bson:"updatedAt"`
 }
 
 type Position struct {
