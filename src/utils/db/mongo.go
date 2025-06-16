@@ -38,7 +38,8 @@ func InitMongoDB() error {
 	defer cancel()
 
 	// MongoDB 연결
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI("mongodb://192.168.51.12:27017")
+	// clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return err

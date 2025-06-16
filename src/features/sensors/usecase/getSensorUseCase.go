@@ -29,6 +29,7 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 	res := &response.ResGetSensor{
 		SensorID:        sensorDTO.SensorID,
 		MotionDetection: sensorDTO.MotionDetection,
+		LightStatus:     sensorDTO.LightStatus,
 	}
 	sensorEventDTOList, err := d.Repository.FindAllSensorEvent(ctx, sensorDTO.SensorID)
 	if err != nil {
@@ -36,7 +37,7 @@ func (d *GetSensorUseCase) GetSensor(c context.Context, req *request.ReqGetSenso
 	}
 	for _, sensorEventDTO := range sensorEventDTOList {
 		if sensorEventDTO.Type == "light" {
-			res.LightStatus = "shutdown"
+			res.LightStatus = "error"
 		}
 		if sensorEventDTO.Type == "fire" {
 			res.FireDetector = "detection"

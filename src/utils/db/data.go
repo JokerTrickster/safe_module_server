@@ -7,6 +7,7 @@ type SensorDTO struct {
 	Position        Position   `json:"position" bson:"position"`
 	Sensors         []Sensor   `json:"sensors" bson:"sensors"`
 	MotionDetection string     `json:"motionDetection" bson:"motionDetection"`
+	LightStatus     string     `json:"lightStatus" bson:"lightStatus"`
 	CreatedAt       *time.Time `json:"createdAt" bson:"createdAt"`
 	DeletedAt       *time.Time `json:"deletedAt" bson:"deletedAt"`
 	UpdatedAt       *time.Time `json:"updatedAt" bson:"updatedAt"`

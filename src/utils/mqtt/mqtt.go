@@ -19,7 +19,8 @@ var (
 // MQTTInit initializes MQTT client
 func MQTTInit() error {
 	// MQTT 브로커에 연결
-	conn, err := net.Dial("tcp", "192.168.0.6:1883")
+	conn, err := net.Dial("tcp", "192.168.51.12:1883")
+	// conn, err := net.Dial("tcp", "localhost:1883")
 	if err != nil {
 		return fmt.Errorf("failed to connect to broker: %v", err)
 	}

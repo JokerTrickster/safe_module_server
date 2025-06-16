@@ -48,7 +48,8 @@ func main() {
 	}
 
 	// Swagger UI
-	swaggerDocs.SwaggerInfo.Host = "localhost:8080"
+	swaggerDocs.SwaggerInfo.Host = "192.168.51.12:8080"
+	// swaggerDocs.SwaggerInfo.Host = "localhost:8080"
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// 서버 시작

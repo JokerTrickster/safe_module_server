@@ -56,13 +56,14 @@ func SensorDataHandler(p *paho.Publish) {
 		SensorID:        sensorData.SensorID,
 		MotionDetection: sensorData.MotionDetection,
 		Sensors:         make([]db.Sensor, len(sensorData.SensorList)),
+		LightStatus:     sensorData.LightStatus,
 		CreatedAt:       &createdAt,
 		UpdatedAt:       &updatedAt,
 	}
 
 	ctx := context.Background()
 
-	if sensorData.LightStatus == "shutdown" {
+	if sensorData.LightStatus == "error" {
 		DangerLightEventUseCase(ctx, sensorDTO)
 	}
 	if sensorData.FireDetector == "detection" {
