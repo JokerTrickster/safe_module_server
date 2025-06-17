@@ -22,7 +22,7 @@ func main() {
 	e := echo.New()
 
 	// 로그 미들웨어 설정
-	e.Use(middleware.Logger())
+	// e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	if err := db.InitMongoDB(); err != nil {

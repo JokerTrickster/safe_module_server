@@ -37,12 +37,13 @@ func (d *SetLightSensorUseCase) SetLightSensor(c context.Context, req *request.R
 		"status": req.Status,
 	})
 
-	resp, err := mqtt.PublishAndWaitForResponse(requestTopic, 2, jsonData, uuid, responseTopic, 5*time.Second)
+	resp, err := mqtt.PublishAndWaitForResponse(requestTopic, 2, jsonData, uuid, responseTopic, 3*time.Second)
 	if err != nil {
+		fmt.Println("setLightSensor 함수 에러 , ", err)
 		return err
 	}
 
-	fmt.Println("응답 메시지 , ", string(resp.Payload))
+	fmt.Println("setLightSensor 함수 응답 메시지 , ", string(resp.Payload))
 
 	// db 상태 변경
 	err = d.Repository.UpdateOneLightSensor(ctx, req.SensorID, req.Status)

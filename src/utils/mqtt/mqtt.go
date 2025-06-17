@@ -120,6 +120,7 @@ func PublishAndWaitForResponse(topic string, qos byte, payload interface{}, corr
 	// 4. 응답 대기 (timeout)
 	select {
 	case resp := <-respCh:
+		fmt.Println("PublishAndWaitForResponse 함수 리스폰스 토픽 응답 메시지 , ", string(resp.Payload))
 		return resp, nil
 	case <-time.After(timeout):
 		return nil, fmt.Errorf("timeout waiting for response")

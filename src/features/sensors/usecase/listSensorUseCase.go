@@ -34,15 +34,13 @@ func (d *ListSensorUseCase) ListSensor(c context.Context) (*response.ResListSens
 		tmpListSensor := response.ListSensor{
 			SensorID:        sensorDTO.SensorID,
 			MotionDetection: sensorDTO.MotionDetection,
+			LightStatus:     sensorDTO.LightStatus,
 		}
 		sensorEventDTOList, err := d.Repository.FindAllSensorEvent(ctx, sensorDTO.SensorID)
 		if err != nil {
 			return nil, err
 		}
 		for _, sensorEventDTO := range sensorEventDTOList {
-			if sensorEventDTO.Type == "light" {
-				tmpListSensor.LightStatus = "shutdown"
-			}
 			if sensorEventDTO.Type == "fire" {
 				tmpListSensor.FireDetector = "detection"
 			}

@@ -50,6 +50,9 @@ func SensorDataHandler(p *paho.Publish) {
 
 	createdAt := time.Now()
 	updatedAt := time.Now()
+	_log.Log(_log.Info, "sensorData", map[string]interface{}{
+		"sensorData LightStatus": sensorData.LightStatus,
+	})
 
 	// SensorDTO로 변환
 	sensorDTO := db.SensorDTO{

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"main/features/sensors/model/request"
 	"main/features/sensors/model/response"
 	"main/utils"
@@ -48,9 +49,10 @@ func (h *SetLightSensorHandler) SetLightSensor(c echo.Context) error {
 	if err := utils.ValidateReq(c, &req); err != nil {
 		return c.JSON(http.StatusBadRequest, false)
 	}
+	fmt.Println("--------------------------------")
+	fmt.Println("SetLightSensorHandler 호출", req)
 
 	err := h.UseCase.SetLightSensor(context.Background(), &req)
-
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, false)
 	}
